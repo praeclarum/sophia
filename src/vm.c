@@ -1,7 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "ast.h"
 #include "vm.h"
+
+struct VM {
+    struct AST *ast;
+};
 
 struct VM *vm_new() {
     struct VM *vm = calloc(1, sizeof(struct VM));
@@ -49,5 +54,17 @@ int vm_repl(struct VM *vm) {
         printf("sophia> ");
     }
     free(line);
+    return 0;
+}
+
+int vm_translate(struct VM *vm, const char *output_file) {
+    (void)vm;
+    FILE *outfile = fopen(output_file, "w");
+    if (!outfile) {
+        fprintf(stderr, "Error: Could not open file %s for writing\n", output_file);
+        return 1;
+    }
+    fprintf(outfile, "// Translation not implemented yet\n");
+    fclose(outfile);
     return 0;
 }

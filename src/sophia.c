@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     // char *output_file = NULL;
     struct VM *vm = vm_new();
     for (i = 1; i < argc; i++) {
-        if (str_endswith(argv[i], ".s")) {
+        if (str_endswith(argv[i], ".sophia")) {
             infile = fopen(argv[i], "r");
             if (!infile) {
                 fprintf(stderr, "Error: Could not open file %s\n", argv[i]);
@@ -27,23 +27,21 @@ int main(int argc, char *argv[]) {
             fclose(infile);
             num_translation_units++;
         }
-        // else if (strcmp(argv[i], "-o") == 0) {
-        //     if (i + 1 < argc) {
-        //         output_file = argv[++i];
-        //     } else {
-        //         fprintf(stderr, "Error: -o option requires an argument\n");
-        //         return EXIT_FAILURE;
-        //     }
-        // }
+        else if (strcmp(argv[i], "-o") == 0) {
+            if (i + 1 < argc) {
+                vm_translate(vm, argv[++i]);
+            } else {
+                fprintf(stderr, "Error: -o option requires an argument\n");
+                return EXIT_FAILURE;
+            }
+        }
         else {
             fprintf(stderr, "Error: Invalid file type %s\n", argv[i]);
             return EXIT_FAILURE;
         }
     }
     if (num_translation_units == 0) {
-        if (vm_repl(vm) != 0) {
-            return 2;
-        }
+        return vm_repl(vm);
     }
     return EXIT_SUCCESS;
 }
