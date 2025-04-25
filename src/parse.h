@@ -50,7 +50,9 @@
      EQ = 266,
      GE = 267,
      LE = 268,
-     UMINUS = 269
+     UMINUS = 269,
+     NUM = 270,
+     EOL = 271
    };
 #endif
 /* Tokens.  */
@@ -66,6 +68,8 @@
 #define GE 267
 #define LE 268
 #define UMINUS 269
+#define NUM 270
+#define EOL 271
 
 
 

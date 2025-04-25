@@ -29,6 +29,9 @@ void yyerror(YYLTYPE *llocp, FILE *infile, char const *);
 %left '.' '(' '['
 %left ',' ';'
 
+%token NUM
+%token EOL
+
 %start translation_unit
 
 %%
