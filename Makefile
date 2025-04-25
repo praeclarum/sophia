@@ -4,10 +4,10 @@ CFLAGS = -Wall -Wextra -Werror
 
 .PHONY: all clean
 
-all: parser.c sophia
+all: sophia
 
-parser.c: src/sophia.y
-	bison -d -o src/parser.c src/sophia.y
+parse.c: src/sophia.y
+	bison -d --locations -o src/parse.c src/sophia.y
 
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@

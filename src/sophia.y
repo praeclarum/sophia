@@ -1,6 +1,12 @@
 %require "2.3"
 %pure-parser
 
+%{
+#include "parse.h"
+int yylex(YYSTYPE *lvalp, YYLTYPE *llocp);
+void yyerror(char const *);
+%}
+
 %left '='
 %nonassoc ASSIGN_ADD ASSIGN_SUB ASSIGN_MUL ASSIGN_DIV ASSIGN_MOD
 %left OR
@@ -20,6 +26,9 @@
 
 translation_unit:
     | '\n'
+    {
+        (void)yynerrs;
+    }
     ;
 
 %%
