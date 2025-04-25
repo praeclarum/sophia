@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/sophia",
+            "args": ["tests/circuit.sophia", "-o", "tests/circuit.swift", "-o", "tests/circuit.cs", "-o", "tests/circuit.js"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "Build",
+            "MIMode": "lldb"
+        }
+
+    ]
+}
