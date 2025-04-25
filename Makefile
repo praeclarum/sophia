@@ -6,8 +6,8 @@ CFLAGS = -Wall -Wextra -Werror
 
 all: sophia
 
-parse.c: src/sophia.y
-	bison -d --locations -o src/parse.c src/sophia.y
+parse.c: src/parse.y
+	bison -d --locations -o src/parse.c src/parse.y
 
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@

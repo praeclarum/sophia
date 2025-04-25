@@ -1,10 +1,19 @@
 %require "2.3"
 %pure-parser
+%error-verbose
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+%parse-param {FILE *infile}
+%lex-param   {FILE *infile}
 
 %{
 #include "parse.h"
-int yylex(YYSTYPE *lvalp, YYLTYPE *llocp);
-void yyerror(char const *);
+int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile);
+void yyerror(YYLTYPE *llocp, FILE *infile, char const *);
 %}
 
 %left '='
@@ -28,6 +37,7 @@ translation_unit:
     | '\n'
     {
         (void)yynerrs;
+        (void)@1.first_line;
     }
     ;
 
