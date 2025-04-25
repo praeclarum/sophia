@@ -5,8 +5,12 @@
 
 #include "parse.h"
 
+#define MAX_ID_LEN 1024
+
 int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile) {
     int c;
+    char id[MAX_ID_LEN];
+    int id_len = 0;
     while ((c = fgetc(infile)) == ' ' || c == '\t') {
         ++llocp->last_column;
     }
@@ -15,19 +19,36 @@ int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile) {
 
     // fprintf(stderr, "Lexing char: 0x%x ('%c')\n", c, c);
 
+    if (c == EOF) {
+        return 0;
+    }
+
     if (isdigit(c)) {
-        *lvalp = c - '0';
+        lvalp->num = c - '0';
         ++llocp->last_column;
         while (isdigit(c = fgetc(infile))) {
             ++llocp->last_column;
-            *lvalp = *lvalp * 10 + c - '0';
+            lvalp->num = lvalp->num * 10 + c - '0';
         }
         ungetc(c, infile);
-        return NUM;
+        return NUMBER;
     }
 
-    if (c == EOF) {
-        return 0;
+    if (isalpha(c) || c == '_') {
+        id[id_len++] = c;
+        while ((c = fgetc(infile)) && (isalnum(c) || c == '_')) {
+            ++llocp->last_column;
+            if (id_len < MAX_ID_LEN - 1) {
+                id[id_len++] = c;
+            }
+        }
+        ungetc(c, infile);
+        id[id_len] = '\0';
+        if (strcmp(id, "class") == 0) {
+            return CLASS;
+        }
+        lvalp->str = strdup(id);
+        return IDENTIFIER;
     }
 
     if (c == '\n') {
@@ -42,6 +63,5 @@ int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile) {
 
 void yyerror(YYLTYPE *llocp, FILE *infile, char const *message) {
     fprintf(stderr, "%s at line %d, column %d\n", message, llocp->first_line, llocp->first_column);
-    exit(EXIT_FAILURE);
     (void)infile;
 }

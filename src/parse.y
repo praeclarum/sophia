@@ -16,6 +16,11 @@ int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile);
 void yyerror(YYLTYPE *llocp, FILE *infile, char const *);
 %}
 
+%union {
+    char *str;
+    int num;
+}
+
 %left '='
 %nonassoc ASSIGN_ADD ASSIGN_SUB ASSIGN_MUL ASSIGN_DIV ASSIGN_MOD
 %left OR
@@ -29,19 +34,31 @@ void yyerror(YYLTYPE *llocp, FILE *infile, char const *);
 %left '.' '(' '['
 %left ',' ';'
 
-%token NUM
+%token NUMBER
+%token<str> IDENTIFIER
 %token EOL
+%token CLASS
 
 %start translation_unit
 
 %%
 
-translation_unit:
-    | '\n'
+translation_unit
+    : statement
+    | translation_unit statement
     {
         (void)yynerrs;
         (void)@1.first_line;
     }
     ;
+
+statement
+    : class_declaration
+    ;
+
+class_declaration
+    : CLASS IDENTIFIER EOL
+    ;
+
 
 %%

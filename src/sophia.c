@@ -4,13 +4,13 @@
 
 int yyparse(FILE *infile);
 
-int str_endswith(const char *str, const char *suffix) {
+static int str_endswith(const char *str, const char *suffix) {
     size_t lenstr = strlen(str);
     size_t lensuffix = strlen(suffix);
     return (lenstr >= lensuffix) && (strcmp(str + lenstr - lensuffix, suffix) == 0);
 }
 
-int repl() {
+static int repl() {
     char *line = NULL;
     size_t len = 0;
     ssize_t read;

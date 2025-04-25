@@ -51,8 +51,10 @@
      GE = 267,
      LE = 268,
      UMINUS = 269,
-     NUM = 270,
-     EOL = 271
+     NUMBER = 270,
+     IDENTIFIER = 271,
+     EOL = 272,
+     CLASS = 273
    };
 #endif
 /* Tokens.  */
@@ -68,14 +70,24 @@
 #define GE 267
 #define LE 268
 #define UMINUS 269
-#define NUM 270
-#define EOL 271
+#define NUMBER 270
+#define IDENTIFIER 271
+#define EOL 272
+#define CLASS 273
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+#line 19 "src/parse.y"
+{
+    char *str;
+    int num;
+}
+/* Line 1529 of yacc.c.  */
+#line 90 "src/parse.h"
+	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
