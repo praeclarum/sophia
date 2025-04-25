@@ -80,7 +80,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "src/parse.y"
+#line 22 "src/parse.y"
 {
     char *str;
     int num;

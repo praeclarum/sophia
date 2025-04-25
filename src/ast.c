@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "ast.h"
 
@@ -17,6 +18,35 @@ void ast_free(struct AST *ast) {
     if (!ast) {
         return;
     }
+    switch (ast->type) {
+    case AST_CLASS_DECL:
+        free(ast->data.class_decl.name);
+        ast_free(ast->data.class_decl.base_class);
+        ast_free(ast->data.class_decl.members);
+        break;
+    
+    case AST_UNRESOLVED_TYPE_REF:
+        free(ast->data.unresolved_type_ref.name);
+        break;
+    
+    default:
+        break;
+    }
     free(ast);
 }
 
+struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members) {
+    struct AST *ast = ast_new(AST_CLASS_DECL);
+    if (!ast) {
+        return NULL;
+    }
+    ast->data.class_decl.name = strdup(name);
+    if (!ast->data.class_decl.name) {
+        fprintf(stderr, "Error: Could not allocate memory for class name\n");
+        ast_free(ast);
+        return NULL;
+    }
+    ast->data.class_decl.base_class = base_class;
+    ast->data.class_decl.members = members;
+    return ast;
+}

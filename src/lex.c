@@ -7,6 +7,8 @@
 
 #define MAX_ID_LEN 1024
 
+struct VM;
+
 int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile) {
     int c;
     char id[MAX_ID_LEN];
@@ -61,7 +63,8 @@ int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile) {
     return c;
 }
 
-void yyerror(YYLTYPE *llocp, FILE *infile, char const *message) {
+void yyerror(YYLTYPE *llocp, struct VM *vm, FILE *infile, char const *message) {
     fprintf(stderr, "%s at line %d, column %d\n", message, llocp->first_line, llocp->first_column);
     (void)infile;
+    (void)vm;
 }

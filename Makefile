@@ -1,7 +1,7 @@
 SRCS = $(wildcard src/*.c)
 HDRS = $(wildcard src/*.h)
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 .PHONY: all clean
 

@@ -26,11 +26,21 @@ void vm_free(struct VM *vm) {
     free(vm);
 }
 
-int yyparse(FILE *infile);
+
+int vm_eval_ast(struct VM *vm, struct AST *ast) {
+    if (!vm || !ast) {
+        fprintf(stderr, "Error: Invalid VM or AST\n");
+        return 1;
+    }
+    vm->ast = ast;
+    return 0;
+}
+
+int yyparse(struct VM *vm, FILE *infile);
 
 int vm_eval_file(struct VM *vm, FILE *infile) {
     (void)vm;
-    int r = yyparse(infile);
+    int r = yyparse(vm, infile);
     return r;
 }
 

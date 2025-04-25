@@ -5,15 +5,18 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "ast.h"
+#include "vm.h"
+#include "parse.h"
 %}
 
+%parse-param {struct VM *vm}
 %parse-param {FILE *infile}
 %lex-param   {FILE *infile}
 
 %{
-#include "parse.h"
 int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile);
-void yyerror(YYLTYPE *llocp, FILE *infile, char const *);
+void yyerror(YYLTYPE *llocp, struct VM *vm, FILE *infile, char const *);
 %}
 
 %union {
@@ -32,7 +35,7 @@ void yyerror(YYLTYPE *llocp, FILE *infile, char const *);
 %left UMINUS
 %right '^'
 %left '.' '(' '['
-%left ',' ';'
+%left ',' ':' ';'
 
 %token NUMBER
 %token<str> IDENTIFIER
@@ -58,6 +61,9 @@ statement
 
 class_declaration
     : CLASS IDENTIFIER EOL
+    {
+        vm_eval_ast(vm, ast_new_class_decl($2, NULL, NULL));
+    }
     ;
 
 
