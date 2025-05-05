@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "ast.h"
+#include "lex.h"
 #include "vm.h"
 
 struct VM {
@@ -36,11 +37,13 @@ int vm_eval_ast(struct VM *vm, struct AST *ast) {
     return 0;
 }
 
-int yyparse(struct VM *vm, FILE *infile);
+int yyparse(struct VM *vm, struct LexState *lex);
 
 int vm_eval_file(struct VM *vm, FILE *infile) {
     (void)vm;
-    int r = yyparse(vm, infile);
+    struct LexState *lex = lex_begin(infile);
+    int r = yyparse(vm, lex);
+    lex_end(lex);
     return r;
 }
 

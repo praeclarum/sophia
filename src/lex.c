@@ -9,10 +9,32 @@
 
 struct VM;
 
-int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile) {
+struct LexState {
+    FILE *infile;
+};
+
+struct LexState *lex_begin(FILE *infile) {
+    struct LexState *state = calloc(1, sizeof(struct LexState));
+    if (!state) {
+        fprintf(stderr, "Error: Could not allocate memory for lex state\n");
+        return NULL;
+    }
+    state->infile = infile;
+    return state;
+}
+
+void lex_end(struct LexState *state) {
+    if (state) {
+        fclose(state->infile);
+        free(state);
+    }
+}
+
+int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, struct LexState *state) {
     int c;
     char id[MAX_ID_LEN];
     int id_len = 0;
+    FILE *infile = state->infile;
     while ((c = fgetc(infile)) == ' ' || c == '\t') {
         ++llocp->last_column;
     }

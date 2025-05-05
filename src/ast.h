@@ -25,5 +25,5 @@ void ast_free(struct AST *ast);
 
 void ast_print(struct AST *ast, int indent);
 
-struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members);
+struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members, int first_line);
 

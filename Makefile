@@ -3,7 +3,7 @@ HDRS = $(wildcard src/*.h)
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -Wextra -Werror -g
 
-.PHONY: all clean test
+.PHONY: all clean run test
 
 all: sophia
 
@@ -18,6 +18,10 @@ sophia: src/parse.c $(OBJS)
 
 clean:
 	rm -f $(OBJS) sophia
+	rm -rf tests/results
+
+run: sophia
+	@./sophia
 
 test: sophia
 	@mkdir -p tests/results

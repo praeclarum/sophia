@@ -7,16 +7,17 @@
 #include <stdlib.h>
 #include "ast.h"
 #include "vm.h"
+#include "lex.h"
 #include "parse.h"
 %}
 
 %parse-param {struct VM *vm}
-%parse-param {FILE *infile}
-%lex-param   {FILE *infile}
+%parse-param {struct LexState *lexstate}
+%lex-param   {struct LexState *lexstate}
 
 %{
-int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile);
-void yyerror(YYLTYPE *llocp, struct VM *vm, FILE *infile, char const *);
+int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, struct LexState *lexstate);
+void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char const *);
 %}
 
 %union {
@@ -62,7 +63,7 @@ statement
 class_declaration
     : CLASS IDENTIFIER EOL
     {
-        vm_eval_ast(vm, ast_new_class_decl($2, NULL, NULL));
+        vm_eval_ast(vm, ast_new_class_decl($2, NULL, NULL, @1.first_line));
     }
     ;
 

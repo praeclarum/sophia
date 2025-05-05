@@ -112,11 +112,12 @@
 #include <stdlib.h>
 #include "ast.h"
 #include "vm.h"
+#include "lex.h"
 #include "parse.h"
-#line 17 "src/parse.y"
+#line 18 "src/parse.y"
 
-int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, FILE *infile);
-void yyerror(YYLTYPE *llocp, struct VM *vm, FILE *infile, char const *);
+int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, struct LexState *lexstate);
+void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char const *);
 
 
 /* Enabling traces.  */
@@ -139,13 +140,13 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, FILE *infile, char const *);
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 22 "src/parse.y"
+#line 23 "src/parse.y"
 {
     char *str;
     int num;
 }
 /* Line 193 of yacc.c.  */
-#line 149 "src/parse.c"
+#line 150 "src/parse.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -170,7 +171,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 174 "src/parse.c"
+#line 175 "src/parse.c"
 
 #ifdef short
 # undef short
@@ -456,7 +457,7 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    50,    50,    51,    59,    63
+       0,    51,    51,    52,    60,    64
 };
 #endif
 
@@ -583,7 +584,7 @@ do								\
     }								\
   else								\
     {								\
-      yyerror (&yylloc, vm, infile, YY_("syntax error: cannot back up")); \
+      yyerror (&yylloc, vm, lexstate, YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
@@ -640,7 +641,7 @@ while (YYID (0))
 #ifdef YYLEX_PARAM
 # define YYLEX yylex (&yylval, &yylloc, YYLEX_PARAM)
 #else
-# define YYLEX yylex (&yylval, &yylloc, infile)
+# define YYLEX yylex (&yylval, &yylloc, lexstate)
 #endif
 
 /* Enable debugging if requested.  */
@@ -663,7 +664,7 @@ do {									  \
     {									  \
       YYFPRINTF (stderr, "%s ", Title);					  \
       yy_symbol_print (stderr,						  \
-		  Type, Value, Location, vm, infile); \
+		  Type, Value, Location, vm, lexstate); \
       YYFPRINTF (stderr, "\n");						  \
     }									  \
 } while (YYID (0))
@@ -677,23 +678,23 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, struct VM *vm, FILE *infile)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, struct VM *vm, struct LexState *lexstate)
 #else
 static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, vm, infile)
+yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, vm, lexstate)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
     YYLTYPE const * const yylocationp;
     struct VM *vm;
-    FILE *infile;
+    struct LexState *lexstate;
 #endif
 {
   if (!yyvaluep)
     return;
   YYUSE (yylocationp);
   YYUSE (vm);
-  YYUSE (infile);
+  YYUSE (lexstate);
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
     YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
@@ -715,16 +716,16 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, vm, infile)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, struct VM *vm, FILE *infile)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, struct VM *vm, struct LexState *lexstate)
 #else
 static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, vm, infile)
+yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, vm, lexstate)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
     YYLTYPE const * const yylocationp;
     struct VM *vm;
-    FILE *infile;
+    struct LexState *lexstate;
 #endif
 {
   if (yytype < YYNTOKENS)
@@ -734,7 +735,7 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, vm, infile)
 
   YY_LOCATION_PRINT (yyoutput, *yylocationp);
   YYFPRINTF (yyoutput, ": ");
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, vm, infile);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, vm, lexstate);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -774,15 +775,15 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, struct VM *vm, FILE *infile)
+yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, struct VM *vm, struct LexState *lexstate)
 #else
 static void
-yy_reduce_print (yyvsp, yylsp, yyrule, vm, infile)
+yy_reduce_print (yyvsp, yylsp, yyrule, vm, lexstate)
     YYSTYPE *yyvsp;
     YYLTYPE *yylsp;
     int yyrule;
     struct VM *vm;
-    FILE *infile;
+    struct LexState *lexstate;
 #endif
 {
   int yynrhs = yyr2[yyrule];
@@ -796,7 +797,7 @@ yy_reduce_print (yyvsp, yylsp, yyrule, vm, infile)
       fprintf (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       , &(yylsp[(yyi + 1) - (yynrhs)])		       , vm, infile);
+		       , &(yylsp[(yyi + 1) - (yynrhs)])		       , vm, lexstate);
       fprintf (stderr, "\n");
     }
 }
@@ -804,7 +805,7 @@ yy_reduce_print (yyvsp, yylsp, yyrule, vm, infile)
 # define YY_REDUCE_PRINT(Rule)		\
 do {					\
   if (yydebug)				\
-    yy_reduce_print (yyvsp, yylsp, Rule, vm, infile); \
+    yy_reduce_print (yyvsp, yylsp, Rule, vm, lexstate); \
 } while (YYID (0))
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1055,22 +1056,22 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, struct VM *vm, FILE *infile)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, struct VM *vm, struct LexState *lexstate)
 #else
 static void
-yydestruct (yymsg, yytype, yyvaluep, yylocationp, vm, infile)
+yydestruct (yymsg, yytype, yyvaluep, yylocationp, vm, lexstate)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
     YYLTYPE *yylocationp;
     struct VM *vm;
-    FILE *infile;
+    struct LexState *lexstate;
 #endif
 {
   YYUSE (yyvaluep);
   YYUSE (yylocationp);
   YYUSE (vm);
-  YYUSE (infile);
+  YYUSE (lexstate);
 
   if (!yymsg)
     yymsg = "Deleting";
@@ -1095,7 +1096,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (struct VM *vm, FILE *infile);
+int yyparse (struct VM *vm, struct LexState *lexstate);
 #else
 int yyparse ();
 #endif
@@ -1124,12 +1125,12 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (struct VM *vm, FILE *infile)
+yyparse (struct VM *vm, struct LexState *lexstate)
 #else
 int
-yyparse (vm, infile)
+yyparse (vm, lexstate)
     struct VM *vm;
-    FILE *infile;
+    struct LexState *lexstate;
 #endif
 #endif
 {
@@ -1400,7 +1401,7 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 52 "src/parse.y"
+#line 53 "src/parse.y"
     {
         (void)yynerrs;
         (void)(yylsp[(1) - (2)]).first_line;
@@ -1408,15 +1409,15 @@ yyreduce:
     break;
 
   case 5:
-#line 64 "src/parse.y"
+#line 65 "src/parse.y"
     {
-        vm_eval_ast(vm, ast_new_class_decl((yyvsp[(2) - (3)].str), NULL, NULL));
+        vm_eval_ast(vm, ast_new_class_decl((yyvsp[(2) - (3)].str), NULL, NULL, (yylsp[(1) - (3)]).first_line));
     ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1420 "src/parse.c"
+#line 1421 "src/parse.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1452,7 +1453,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (&yylloc, vm, infile, YY_("syntax error"));
+      yyerror (&yylloc, vm, lexstate, YY_("syntax error"));
 #else
       {
 	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
@@ -1476,11 +1477,11 @@ yyerrlab:
 	if (0 < yysize && yysize <= yymsg_alloc)
 	  {
 	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (&yylloc, vm, infile, yymsg);
+	    yyerror (&yylloc, vm, lexstate, yymsg);
 	  }
 	else
 	  {
-	    yyerror (&yylloc, vm, infile, YY_("syntax error"));
+	    yyerror (&yylloc, vm, lexstate, YY_("syntax error"));
 	    if (yysize != 0)
 	      goto yyexhaustedlab;
 	  }
@@ -1504,7 +1505,7 @@ yyerrlab:
       else
 	{
 	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, &yylloc, vm, infile);
+		      yytoken, &yylval, &yylloc, vm, lexstate);
 	  yychar = YYEMPTY;
 	}
     }
@@ -1561,7 +1562,7 @@ yyerrlab1:
 
       yyerror_range[0] = *yylsp;
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, yylsp, vm, infile);
+		  yystos[yystate], yyvsp, yylsp, vm, lexstate);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1604,7 +1605,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (&yylloc, vm, infile, YY_("memory exhausted"));
+  yyerror (&yylloc, vm, lexstate, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1612,7 +1613,7 @@ yyexhaustedlab:
 yyreturn:
   if (yychar != YYEOF && yychar != YYEMPTY)
      yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval, &yylloc, vm, infile);
+		 yytoken, &yylval, &yylloc, vm, lexstate);
   /* Do not reclaim the symbols of the rule which action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
@@ -1620,7 +1621,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, yylsp, vm, infile);
+		  yystos[*yyssp], yyvsp, yylsp, vm, lexstate);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1636,6 +1637,6 @@ yyreturn:
 }
 
 
-#line 70 "src/parse.y"
+#line 71 "src/parse.y"
 
 

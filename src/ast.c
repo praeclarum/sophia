@@ -35,8 +35,9 @@ void ast_free(struct AST *ast) {
     free(ast);
 }
 
-struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members) {
+struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members, int first_line) {
     struct AST *ast = ast_new(AST_CLASS_DECL);
+    (void)first_line; // Unused parameter
     if (!ast) {
         return NULL;
     }
