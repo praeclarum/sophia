@@ -1,5 +1,5 @@
 ClassDecl: Resistor
-    UnresolvedTypeRef: Element
+    TypeRef: Element
 ClassDecl: Element
 ClassDecl: Circuit
     VarDecl: x
@@ -8,4 +8,7 @@ ClassDecl: Circuit
         NumExpr: 0
     VarDecl: z
         NumExpr: 100
+    FuncDecl: analyze
+        TypeRef: int
+        VarRef: x
 ClassDecl: Matrix

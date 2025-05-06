@@ -9,6 +9,9 @@ class Circuit =
 
       
     z: double = 100
+    analyze() : int = x
+
+    
 
              
 class Matrix

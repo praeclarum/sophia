@@ -49,6 +49,7 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char cons
 %type<ast> vm_statement
 %type<ast> class_declaration class_statements class_statement class_base
 %type<ast> variable_declaration
+%type<ast> function_declaration
 %type<ast> expression
 %type<ast> type_ref
 
@@ -101,15 +102,16 @@ class_base
 
 class_statements
     : class_statement
-    | class_statements EOL class_statement
+    | class_statements class_statement
     {
-        ast_append($1, $3);
+        ast_append($1, $2);
     }
     ;
 
 class_statement
-    : variable_declaration
-    |
+    : variable_declaration EOL
+    | function_declaration EOL
+    | EOL
     {
         $$ = NULL;
     }
@@ -134,17 +136,28 @@ variable_declaration
     }
     ;
 
+function_declaration
+    : IDENTIFIER '(' ')' ':' type_ref '=' expression
+    {
+        $$ = ast_new_func_decl($1, NULL, $5, $7, @1.first_line);
+    }
+    ;
+
 expression
     : NUMBER
     {
         $$ = ast_new_num_expr($1, @1.first_line);
+    }
+    | IDENTIFIER
+    {
+        $$ = ast_new_var_ref($1, @1.first_line);
     }
     ;
 
 type_ref
     : IDENTIFIER
     {
-        $$ = ast_new_unresolved_type_ref($1, @1.first_line);
+        $$ = ast_new_type_ref($1, @1.first_line);
     }
     ;
 
