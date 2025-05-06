@@ -27,7 +27,6 @@ void vm_free(struct VM *vm) {
     free(vm);
 }
 
-
 int vm_eval_ast(struct VM *vm, struct AST *ast) {
     if (!vm) {
         fprintf(stderr, "Error: Invalid VM\n");
@@ -75,10 +74,11 @@ int vm_repl(struct VM *vm) {
     return 0;
 }
 
-typedef int (*vm_translate_func)(struct VM *vm, FILE *outfile);
+typedef int (*vm_translate_func)(struct AST *ast, FILE *outfile);
 
-static int translate_generic(struct VM *vm, FILE *outfile);
-static int translate_ast(struct VM *vm, FILE *outfile);
+int translate_ast(struct AST *ast, FILE *outfile);
+int translate_generic(struct AST *ast, FILE *outfile);
+int translate_swift(struct AST *ast, FILE *outfile);
 
 int str_endswith(const char *str, const char *suffix);
 
@@ -93,18 +93,21 @@ int vm_translate(struct VM *vm, const char *output_file) {
     if (str_endswith(output_file, ".ast")) {
         translate_func = translate_ast;
     }
-    r = translate_func(vm, outfile);
+    else if (str_endswith(output_file, ".swift")) {
+        translate_func = translate_swift;
+    }
+    r = translate_func(vm->ast, outfile);
     fclose(outfile);
     return r;
 }
 
-static int translate_generic(struct VM *vm, FILE *outfile) {
-    (void)vm;
-    fprintf(outfile, "// Translation not supported for this file type\n");
+int translate_generic(struct AST *ast, FILE *outfile) {
+    (void)ast;
+    fprintf(outfile, "# Translation not supported for this file type\n");
     return 1;
 }
 
-static int translate_ast(struct VM *vm, FILE *outfile) {
-    ast_print(vm->ast, outfile, 0);
+int translate_ast(struct AST *ast, FILE *outfile) {
+    ast_print(ast, outfile, 0);
     return 0;
 }

@@ -1,1 +1,5 @@
-// Translation not supported for this file type
+class Matrix {
+}
+class Circuit {
+    let x = 42
+}
