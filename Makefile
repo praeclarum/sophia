@@ -1,5 +1,6 @@
-SRCS = $(wildcard src/*.c)
-HDRS = $(wildcard src/*.h)
+SRCS = src/ast.c src/lex.c src/parse.c src/sophia.c src/vm.c \
+	src/translate_swift.c
+HDRS = src/ast.h src/lex.h src/parse.h src/vm.h
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -Wextra -Werror -g
 
@@ -9,9 +10,6 @@ all: sophia
 
 src/parse.c: src/parse.y
 	bison -d --locations -o src/parse.c src/parse.y
-
-%.o: src/%.c $(HDRS)
-	$(CC) $(CFLAGS) -c $< -o $@
 
 sophia: src/parse.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)

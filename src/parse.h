@@ -44,7 +44,8 @@
      EOL = 260,
      CLASS = 261,
      INDENT = 262,
-     DEDENT = 263
+     DEDENT = 263,
+     VAR = 264
    };
 #endif
 /* Tokens.  */
@@ -54,6 +55,7 @@
 #define CLASS 261
 #define INDENT 262
 #define DEDENT 263
+#define VAR 264
 
 
 
@@ -67,7 +69,7 @@ typedef union YYSTYPE
     struct AST *ast;
 }
 /* Line 1529 of yacc.c.  */
-#line 71 "src/parse.h"
+#line 73 "src/parse.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

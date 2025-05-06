@@ -181,6 +181,9 @@ int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, struct LexState *state) {
         if (strcmp(id, "class") == 0) {
             return CLASS;
         }
+        else if (strcmp(id, "var") == 0) {
+            return VAR;
+        }
         lvalp->str = strdup(id);
         return IDENTIFIER;
     }

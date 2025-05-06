@@ -20,7 +20,9 @@ struct AST {
         } unresolved_type_ref;
         struct {
             char *name;
+            struct AST *type;
             struct AST *value;
+            int mutable;
         } var_decl;
         struct {
             int value;
@@ -38,6 +40,6 @@ void ast_print(struct AST *ast, FILE *outfile, int indent_level);
 
 struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members, int first_line);
 struct AST *ast_new_unresolved_type_ref(const char *name, int first_line);
-struct AST *ast_new_var_decl(const char *name, struct AST *value, int first_line);
+struct AST *ast_new_var_decl(const char *name, struct AST *type, struct AST *value, int mutable, int first_line);
 struct AST *ast_new_num_expr(int value, int first_line);
 

@@ -44,11 +44,13 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char cons
 %token EOL
 %token CLASS
 %token INDENT DEDENT
+%token VAR
 
 %type<ast> vm_statement
 %type<ast> class_declaration class_statements class_statement class_base
 %type<ast> variable_declaration
 %type<ast> expression
+%type<ast> type_ref
 
 %start vm_statements
 
@@ -87,9 +89,9 @@ class_declaration
     ;
 
 class_base
-    : ':' IDENTIFIER
+    : ':' type_ref
     {
-        $$ = ast_new_unresolved_type_ref($2, @2.first_line);
+        $$ = $2;
     }
     |
     {
@@ -116,7 +118,19 @@ class_statement
 variable_declaration
     : IDENTIFIER '=' expression
     {
-        $$ = ast_new_var_decl($1, $3, @1.first_line);
+        $$ = ast_new_var_decl($1, NULL, $3, 0, @1.first_line);
+    }
+    | IDENTIFIER ':' type_ref '=' expression
+    {
+        $$ = ast_new_var_decl($1, $3, $5, 0, @1.first_line);
+    }
+    | VAR IDENTIFIER '=' expression
+    {
+        $$ = ast_new_var_decl($2, NULL, $4, 1, @1.first_line);
+    }
+    | VAR IDENTIFIER ':' type_ref '=' expression
+    {
+        $$ = ast_new_var_decl($2, $4, $6, 1, @1.first_line);
     }
     ;
 
@@ -124,6 +138,13 @@ expression
     : NUMBER
     {
         $$ = ast_new_num_expr($1, @1.first_line);
+    }
+    ;
+
+type_ref
+    : IDENTIFIER
+    {
+        $$ = ast_new_unresolved_type_ref($1, @1.first_line);
     }
     ;
 

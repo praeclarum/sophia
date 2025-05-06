@@ -4,4 +4,8 @@ ClassDecl: Element
 ClassDecl: Circuit
     VarDecl: x
         NumExpr: 42
+    VarDecl: y
+        NumExpr: 0
+    VarDecl: z
+        NumExpr: 100
 ClassDecl: Matrix

@@ -4,7 +4,11 @@ class Element
 
 class Circuit =
           
-    x = 42
+    x: int = 42
+    var y: long = 0
+
+      
+    z: double = 100
 
              
 class Matrix

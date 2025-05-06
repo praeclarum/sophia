@@ -31,6 +31,7 @@ void ast_free(struct AST *ast) {
 
     case AST_VAR_DECL:
         free(ast->data.var_decl.name);
+        ast_free(ast->data.var_decl.type);
         ast_free(ast->data.var_decl.value);
         break;
 
@@ -110,7 +111,7 @@ struct AST *ast_new_unresolved_type_ref(const char *name, int first_line) {
     return ast;
 }
 
-struct AST *ast_new_var_decl(const char *name, struct AST *value, int first_line) {
+struct AST *ast_new_var_decl(const char *name, struct AST *type, struct AST *value, int mutable, int first_line) {
     struct AST *ast = ast_new(AST_VAR_DECL);
     (void)first_line; // Unused parameter
     if (!ast) {
@@ -122,7 +123,9 @@ struct AST *ast_new_var_decl(const char *name, struct AST *value, int first_line
         ast_free(ast);
         return NULL;
     }
+    ast->data.var_decl.type = type;
     ast->data.var_decl.value = value;
+    ast->data.var_decl.mutable = mutable;
     return ast;
 }
 

@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <string.h>
 #include "ast.h"
 
 static void swift_print(struct AST *ast, FILE *outfile, int indent_level);
+static void swift_print_type(struct AST *ast, FILE *outfile);
 
 static void swift_print_stmt(struct AST *ast, FILE *outfile, int indent_level) {
     if (!ast) {
@@ -23,7 +25,17 @@ static void swift_print_stmt(struct AST *ast, FILE *outfile, int indent_level) {
         break;
 
     case AST_VAR_DECL:
-        fprintf(outfile, "let %s = ", ast->data.var_decl.name);
+        if (ast->data.var_decl.mutable) {
+            fprintf(outfile, "var ");
+        } else {
+            fprintf(outfile, "let ");
+        }
+        fprintf(outfile, "%s ", ast->data.var_decl.name);
+        if (ast->data.var_decl.type) {
+            fprintf(outfile, ": ");
+            swift_print_type(ast->data.var_decl.type, outfile);
+        }
+        fprintf(outfile, " = ");
         swift_print(ast->data.var_decl.value, outfile, indent_level);
         fprintf(outfile, "\n");
         break;
@@ -53,6 +65,40 @@ static void swift_print_expr(struct AST *ast, FILE *outfile) {
     }
 }
 
+static void swift_print_type(struct AST *ast, FILE *outfile) {
+    if (!ast) {
+        return;
+    }
+    switch (ast->type) {
+    case AST_UNRESOLVED_TYPE_REF:
+        if (strcmp(ast->data.unresolved_type_ref.name, "int") == 0) {
+            fprintf(outfile, "Int32");
+        }
+        else if (strcmp(ast->data.unresolved_type_ref.name, "long") == 0) {
+            fprintf(outfile, "Int64");
+        }
+        else if (strcmp(ast->data.unresolved_type_ref.name, "float") == 0) {
+            fprintf(outfile, "Float32");
+        }
+        else if (strcmp(ast->data.unresolved_type_ref.name, "double") == 0) {
+            fprintf(outfile, "Float64");
+        }
+        else if (strcmp(ast->data.unresolved_type_ref.name, "str") == 0) {
+            fprintf(outfile, "String");
+        }
+        else if (strcmp(ast->data.unresolved_type_ref.name, "bool") == 0) {
+            fprintf(outfile, "Bool");
+        }
+        else {
+            fprintf(outfile, "%s", ast->data.unresolved_type_ref.name);
+        }
+        break;
+    default:
+        fprintf(outfile, "/*Unknown type: %d*/0", ast->type);
+        break;
+    }
+}
+
 static void swift_print(struct AST *ast, FILE *outfile, int indent_level) {
     if (!ast) {
         return;
@@ -67,6 +113,12 @@ static void swift_print(struct AST *ast, FILE *outfile, int indent_level) {
         break;
 
     case AST_UNRESOLVED_TYPE_REF:
+        swift_print_type(ast, outfile);
+        if (ast->next) {
+            fprintf(outfile, "/*Unexpected next expr node*/");
+        }
+        break;
+
     case AST_NUM_EXPR:
         swift_print_expr(ast, outfile);
         if (ast->next) {
