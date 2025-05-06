@@ -3,7 +3,7 @@
 
 static void swift_print(struct AST *ast, FILE *outfile, int indent_level);
 
-static void swift_print_decl(struct AST *ast, FILE *outfile, int indent_level) {
+static void swift_print_stmt(struct AST *ast, FILE *outfile, int indent_level) {
     if (!ast) {
         return;
     }
@@ -12,7 +12,12 @@ static void swift_print_decl(struct AST *ast, FILE *outfile, int indent_level) {
     }
     switch (ast->type) {
     case AST_CLASS_DECL:
-        fprintf(outfile, "class %s {\n", ast->data.class_decl.name);
+        fprintf(outfile, "class %s", ast->data.class_decl.name);
+        if (ast->data.class_decl.base_class) {
+            fprintf(outfile, " : ");
+            swift_print(ast->data.class_decl.base_class, outfile, indent_level);
+        }
+        fprintf(outfile, " {\n");
         swift_print(ast->data.class_decl.members, outfile, indent_level + 1);
         fprintf(outfile, "}\n");
         break;
@@ -56,7 +61,7 @@ static void swift_print(struct AST *ast, FILE *outfile, int indent_level) {
     case AST_CLASS_DECL:
     case AST_VAR_DECL:
         while (ast) {
-            swift_print_decl(ast, outfile, indent_level);
+            swift_print_stmt(ast, outfile, indent_level);
             ast = ast->next;
         }
         break;

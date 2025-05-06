@@ -95,6 +95,21 @@ struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct 
     return ast;
 }
 
+struct AST *ast_new_unresolved_type_ref(const char *name, int first_line) {
+    struct AST *ast = ast_new(AST_UNRESOLVED_TYPE_REF);
+    (void)first_line; // Unused parameter
+    if (!ast) {
+        return NULL;
+    }
+    ast->data.unresolved_type_ref.name = strdup(name);
+    if (!ast->data.unresolved_type_ref.name) {
+        fprintf(stderr, "Error: Could not allocate memory for unresolved type reference\n");
+        ast_free(ast);
+        return NULL;
+    }
+    return ast;
+}
+
 struct AST *ast_new_var_decl(const char *name, struct AST *value, int first_line) {
     struct AST *ast = ast_new(AST_VAR_DECL);
     (void)first_line; // Unused parameter

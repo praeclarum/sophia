@@ -1,3 +1,6 @@
+ClassDecl: Resistor
+  UnresolvedTypeRef: Element
+ClassDecl: Element
 ClassDecl: Matrix
 ClassDecl: Circuit
   VarDecl: x

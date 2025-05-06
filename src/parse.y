@@ -46,7 +46,7 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char cons
 %token INDENT DEDENT
 
 %type<ast> vm_statement
-%type<ast> class_declaration class_statements class_statement
+%type<ast> class_declaration class_statements class_statement class_base
 %type<ast> variable_declaration
 %type<ast> expression
 
@@ -76,13 +76,24 @@ vm_statement
     ;
 
 class_declaration
-    : CLASS IDENTIFIER
+    : CLASS IDENTIFIER class_base
     {
-        $$ = ast_new_class_decl($2, NULL, NULL, @1.first_line);
+        $$ = ast_new_class_decl($2, $3, NULL, @1.first_line);
     }
-    | CLASS IDENTIFIER '=' EOL INDENT class_statements DEDENT
+    | CLASS IDENTIFIER class_base '=' EOL INDENT class_statements DEDENT
     {
-        $$ = ast_new_class_decl($2, NULL, $6, @1.first_line);
+        $$ = ast_new_class_decl($2, $3, $7, @1.first_line);
+    }
+    ;
+
+class_base
+    : ':' IDENTIFIER
+    {
+        $$ = ast_new_unresolved_type_ref($2, @2.first_line);
+    }
+    |
+    {
+        $$ = NULL;
     }
     ;
 

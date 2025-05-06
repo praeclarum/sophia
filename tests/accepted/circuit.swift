@@ -1,3 +1,7 @@
+class Resistor : Element {
+}
+class Element {
+}
 class Matrix {
 }
 class Circuit {
