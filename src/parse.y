@@ -42,6 +42,7 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char cons
 %token<str> IDENTIFIER
 %token EOL
 %token CLASS
+%token INDENT DEDENT
 
 %start translation_unit
 
@@ -49,7 +50,7 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char cons
 
 translation_unit
     : statement
-    | translation_unit statement
+    | translation_unit EOL statement
     {
         (void)yynerrs;
         (void)@1.first_line;
@@ -58,14 +59,30 @@ translation_unit
 
 statement
     : class_declaration
+    | variable_declaration
+    |
     ;
 
 class_declaration
-    : CLASS IDENTIFIER EOL
+    : CLASS IDENTIFIER
+    {
+        vm_eval_ast(vm, ast_new_class_decl($2, NULL, NULL, @1.first_line));
+    }
+    | CLASS IDENTIFIER '=' EOL INDENT class_body DEDENT
     {
         vm_eval_ast(vm, ast_new_class_decl($2, NULL, NULL, @1.first_line));
     }
     ;
 
+class_body
+    : statement
+    | class_body EOL statement
+    ;
+
+variable_declaration
+    : IDENTIFIER '=' NUMBER
+    {
+    }
+    ;
 
 %%

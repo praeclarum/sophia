@@ -6,7 +6,12 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/sophia",
-            "args": ["tests/circuit.sophia", "-o", "tests/circuit.swift", "-o", "tests/circuit.cs", "-o", "tests/circuit.js"],
+            "args": [
+                "tests/circuit.sophia",
+                "-o", "tests/results/circuit.swift",
+                "-o", "tests/results/circuit.cs",
+                "-o", "tests/results/circuit.js"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

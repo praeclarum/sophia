@@ -50,7 +50,7 @@ int vm_eval_file(struct VM *vm, FILE *infile) {
 int vm_repl(struct VM *vm) {
     char *line = NULL;
     size_t len = 0;
-    ssize_t read;
+    ssize_t read = 0;
 
     printf("sophia> ");
     while ((read = getline(&line, &len, stdin)) != -1) {

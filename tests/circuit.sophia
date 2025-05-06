@@ -1,1 +1,2 @@
-class Circuit
+class Circuit =
+    x = 42

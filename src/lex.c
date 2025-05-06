@@ -10,7 +10,11 @@
 struct VM;
 
 struct LexState {
-    FILE *infile;
+    FILE *file;
+    int indent_depth;
+    int last_indent;
+    int bol;
+    int eof;
 };
 
 struct LexState *lex_begin(FILE *infile) {
@@ -19,31 +23,101 @@ struct LexState *lex_begin(FILE *infile) {
         fprintf(stderr, "Error: Could not allocate memory for lex state\n");
         return NULL;
     }
-    state->infile = infile;
+    state->file = infile;
+    state->bol = 1;
     return state;
 }
 
 void lex_end(struct LexState *state) {
     if (state) {
-        fclose(state->infile);
         free(state);
     }
 }
 
 int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, struct LexState *state) {
-    int c;
-    char id[MAX_ID_LEN];
     int id_len = 0;
-    FILE *infile = state->infile;
-    while ((c = fgetc(infile)) == ' ' || c == '\t') {
-        ++llocp->last_column;
-    }
+    FILE *infile = state->file;
+    char id[MAX_ID_LEN];
+    int c = 0;
+    int new_indent = 0;
+    id[0] = '\0';
     llocp->first_line = llocp->last_line;
     llocp->first_column = llocp->last_column;
-
-    // fprintf(stderr, "Lexing char: 0x%x ('%c')\n", c, c);
+    if (state->eof) {
+        if (state->indent_depth > 0) {
+            state->indent_depth--;
+            return DEDENT;
+        }
+        return 0;
+    }
+    c = fgetc(infile);
+    if (c == EOF) {
+        state->eof = 1;
+        if (state->indent_depth > 0) {
+            state->indent_depth--;
+            return DEDENT;
+        }
+        return 0;
+    }
+    if (c == '\r') {
+        c = fgetc(infile);
+        if (c != '\n') {
+            ungetc(c, infile);
+        }
+        ++llocp->last_line;
+        llocp->last_column = 0;
+        state->bol = 1;
+        return EOL;
+    }
+    if (c == '\n') {
+        ++llocp->last_line;
+        llocp->last_column = 0;
+        state->bol = 1;
+        return EOL;
+    }
+    if (c == '\t') {
+        ++llocp->last_column;
+        return '\t';
+    }
+    if (state->bol && c == ' ') {
+        state->bol = 0;
+        while (c == ' ') {
+            ++llocp->last_column;
+            ++new_indent;
+            c = fgetc(infile);
+        }
+        if (new_indent > state->last_indent) {
+            ungetc(c, infile);
+            state->last_indent = new_indent;
+            state->indent_depth++;
+            return INDENT;
+        }
+        else if (new_indent < state->last_indent) {
+            ungetc(c, infile);
+            state->last_indent = new_indent;
+            if (state->indent_depth > 0) {
+                state->indent_depth--;
+            }
+            return DEDENT;
+        }
+        else {
+            ++llocp->last_column;
+        }
+    }
+    else {
+        state->bol = 0;
+        while (c == ' ') {
+            ++llocp->last_column;
+            c = fgetc(infile);
+        }
+    }
 
     if (c == EOF) {
+        state->eof = 1;
+        if (state->indent_depth > 0) {
+            state->indent_depth--;
+            return DEDENT;
+        }
         return 0;
     }
 

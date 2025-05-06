@@ -54,7 +54,9 @@
      NUMBER = 270,
      IDENTIFIER = 271,
      EOL = 272,
-     CLASS = 273
+     CLASS = 273,
+     INDENT = 274,
+     DEDENT = 275
    };
 #endif
 /* Tokens.  */
@@ -74,6 +76,8 @@
 #define IDENTIFIER 271
 #define EOL 272
 #define CLASS 273
+#define INDENT 274
+#define DEDENT 275
 
 
 
@@ -86,7 +90,7 @@ typedef union YYSTYPE
     int num;
 }
 /* Line 1529 of yacc.c.  */
-#line 90 "src/parse.h"
+#line 94 "src/parse.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

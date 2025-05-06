@@ -16,6 +16,8 @@ int main(int argc, char *argv[]) {
     int num_translation_units = 0;
     // char *output_file = NULL;
     struct VM *vm = vm_new();
+    int exit_code = EXIT_SUCCESS;
+    int r = 0;
     for (i = 1; i < argc; i++) {
         if (str_endswith(argv[i], ".sophia")) {
             infile = fopen(argv[i], "r");
@@ -23,7 +25,11 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "Error: Could not open file %s\n", argv[i]);
                 return 1;
             }
-            vm_eval_file(vm, infile);
+            r = vm_eval_file(vm, infile);
+            if (r != 0) {
+                fprintf(stderr, "Error: Failed to evaluate file %s\n", argv[i]);
+                exit_code = 2;
+            }
             fclose(infile);
             num_translation_units++;
         }
@@ -43,5 +49,5 @@ int main(int argc, char *argv[]) {
     if (num_translation_units == 0) {
         return vm_repl(vm);
     }
-    return EXIT_SUCCESS;
+    return exit_code;
 }
