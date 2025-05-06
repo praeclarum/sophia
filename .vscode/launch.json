@@ -8,6 +8,7 @@
             "program": "${workspaceFolder}/sophia",
             "args": [
                 "tests/circuit.sophia",
+                "-o", "tests/results/circuit.ast",
                 "-o", "tests/results/circuit.swift",
                 "-o", "tests/results/circuit.cs",
                 "-o", "tests/results/circuit.js"

@@ -33,7 +33,12 @@ int vm_eval_ast(struct VM *vm, struct AST *ast) {
         fprintf(stderr, "Error: Invalid VM\n");
         return 1;
     }
-    ast_append(vm->ast, ast);
+    if (vm->ast) {
+        ast_append(vm->ast, ast);
+    }
+    else {
+        vm->ast = ast;
+    }
     return 0;
 }
 
@@ -70,14 +75,36 @@ int vm_repl(struct VM *vm) {
     return 0;
 }
 
+typedef int (*vm_translate_func)(struct VM *vm, FILE *outfile);
+
+static int translate_generic(struct VM *vm, FILE *outfile);
+static int translate_ast(struct VM *vm, FILE *outfile);
+
+int str_endswith(const char *str, const char *suffix);
+
 int vm_translate(struct VM *vm, const char *output_file) {
-    (void)vm;
+    int r = 0;
+    vm_translate_func translate_func = translate_generic;
     FILE *outfile = fopen(output_file, "w");
     if (!outfile) {
         fprintf(stderr, "Error: Could not open file %s for writing\n", output_file);
         return 1;
     }
-    fprintf(outfile, "// Translation not implemented yet\n");
+    if (str_endswith(output_file, ".ast")) {
+        translate_func = translate_ast;
+    }
+    r = translate_func(vm, outfile);
     fclose(outfile);
+    return r;
+}
+
+static int translate_generic(struct VM *vm, FILE *outfile) {
+    (void)vm;
+    fprintf(outfile, "// Translation not supported for this file type\n");
+    return 1;
+}
+
+static int translate_ast(struct VM *vm, FILE *outfile) {
+    ast_print(vm->ast, outfile, 0);
     return 0;
 }

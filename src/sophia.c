@@ -4,7 +4,7 @@
 
 #include "vm.h"
 
-static int str_endswith(const char *str, const char *suffix) {
+int str_endswith(const char *str, const char *suffix) {
     size_t lenstr = strlen(str);
     size_t lensuffix = strlen(suffix);
     return (lenstr >= lensuffix) && (strcmp(str + lenstr - lensuffix, suffix) == 0);

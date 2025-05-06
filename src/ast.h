@@ -34,7 +34,7 @@ void ast_free(struct AST *ast);
 
 void ast_append(struct AST *parent, struct AST *child);
 
-void ast_print(struct AST *ast, int indent);
+void ast_print(struct AST *ast, FILE *outfile, int indent_level);
 
 struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members, int first_line);
 struct AST *ast_new_var_decl(const char *name, struct AST *value, int first_line);

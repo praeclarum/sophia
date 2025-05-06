@@ -26,6 +26,6 @@ run: sophia
 test: sophia
 	@mkdir -p tests/results
 	@mkdir -p tests/accepted
-	./sophia tests/circuit.sophia -o tests/results/circuit.swift -o tests/results/circuit.cs -o tests/results/circuit.js
+	./sophia tests/circuit.sophia -o tests/results/circuit.ast -o tests/results/circuit.swift -o tests/results/circuit.cs -o tests/results/circuit.js
 	@diff -rq tests/accepted tests/results
 	@echo "\033[0;32m✓ outputs match\033[0m"

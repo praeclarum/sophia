@@ -1,1 +1,1 @@
-// Translation not implemented yet
+// Translation not supported for this file type

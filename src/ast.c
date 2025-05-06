@@ -28,11 +28,53 @@ void ast_free(struct AST *ast) {
     case AST_UNRESOLVED_TYPE_REF:
         free(ast->data.unresolved_type_ref.name);
         break;
+
+    case AST_VAR_DECL:
+        free(ast->data.var_decl.name);
+        ast_free(ast->data.var_decl.value);
+        break;
+
+    case AST_NUM_EXPR:
+        // No dynamic memory to free
+        break;
     
     default:
         break;
     }
     free(ast);
+}
+
+void ast_print(struct AST *ast, FILE *outfile, int indent_level) {
+    if (!ast) {
+        return;
+    }
+    for (int i = 0; i < indent_level; i++) {
+        fprintf(outfile, "  ");
+    }
+    switch (ast->type) {
+    case AST_CLASS_DECL:
+        fprintf(outfile, "ClassDecl: %s\n", ast->data.class_decl.name);
+        ast_print(ast->data.class_decl.base_class, outfile, indent_level + 1);
+        ast_print(ast->data.class_decl.members, outfile, indent_level + 1);
+        break;
+
+    case AST_UNRESOLVED_TYPE_REF:
+        fprintf(outfile, "UnresolvedTypeRef: %s\n", ast->data.unresolved_type_ref.name);
+        break;
+
+    case AST_VAR_DECL:
+        fprintf(outfile, "VarDecl: %s\n", ast->data.var_decl.name);
+        ast_print(ast->data.var_decl.value, outfile, indent_level + 1);
+        break;
+
+    case AST_NUM_EXPR:
+        fprintf(outfile, "NumExpr: %d\n", ast->data.num_expr.value);
+        break;
+
+    default:
+        fprintf(outfile, "Unknown AST type\n");
+        break;
+    }
 }
 
 struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members, int first_line) {
