@@ -59,24 +59,24 @@ vm_statements
     {
         vm_eval_ast(vm, $1);
     }
-    | vm_statements EOL vm_statement
+    | vm_statements vm_statement
     {
-        vm_eval_ast(vm, $3);
+        vm_eval_ast(vm, $2);
         (void)yynerrs;
     }
     ;
 
 vm_statement
     : class_declaration
-    | variable_declaration
-    |
+    | variable_declaration EOL
+    | EOL
     {
         $$ = NULL;
     }
     ;
 
 class_declaration
-    : CLASS IDENTIFIER class_base
+    : CLASS IDENTIFIER class_base EOL
     {
         $$ = ast_new_class_decl($2, $3, NULL, @1.first_line);
     }
@@ -128,3 +128,7 @@ expression
     ;
 
 %%
+
+void print_token(int token, FILE *out) {
+    fprintf(out, "%s", yytname[YYTRANSLATE(token)]);
+}

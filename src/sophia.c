@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "lex.h"
 #include "vm.h"
 
 int str_endswith(const char *str, const char *suffix) {
@@ -18,8 +19,12 @@ int main(int argc, char *argv[]) {
     struct VM *vm = vm_new();
     int exit_code = EXIT_SUCCESS;
     int r = 0;
+    int should_output_tokens = 0;
     for (i = 1; i < argc; i++) {
         if (str_endswith(argv[i], ".sophia")) {
+            if (should_output_tokens) {
+                lex_output_tokens(argv[i], "tokens.txt");
+            }
             infile = fopen(argv[i], "r");
             if (!infile) {
                 fprintf(stderr, "Error: Could not open file %s\n", argv[i]);
@@ -41,8 +46,11 @@ int main(int argc, char *argv[]) {
                 return EXIT_FAILURE;
             }
         }
+        else if (strcmp(argv[i], "--output_tokens") == 0) {
+            should_output_tokens = 1;
+        }
         else {
-            fprintf(stderr, "Error: Invalid file type %s\n", argv[i]);
+            fprintf(stderr, "Invalid command line argument: %s\n", argv[i]);
             return EXIT_FAILURE;
         }
     }

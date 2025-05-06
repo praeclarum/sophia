@@ -17,6 +17,7 @@ sophia: src/parse.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
 clean:
+	rm -rf src/parse.c src/parse.h
 	rm -f $(OBJS) sophia
 	rm -rf tests/results
 

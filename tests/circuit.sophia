@@ -2,7 +2,9 @@ class Resistor: Element
 
 class Element
 
-class Matrix
-
 class Circuit =
+          
     x = 42
+
+             
+class Matrix
