@@ -75,6 +75,7 @@ void ast_print(struct AST *ast, FILE *outfile, int indent_level) {
         fprintf(outfile, "Unknown AST type\n");
         break;
     }
+    ast_print(ast->next, outfile, indent_level);
 }
 
 struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct AST *members, int first_line) {

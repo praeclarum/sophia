@@ -3,7 +3,7 @@ HDRS = $(wildcard src/*.h)
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -Wextra -Werror -g
 
-.PHONY: all clean run test
+.PHONY: all clean run test accept
 
 all: sophia
 
@@ -29,3 +29,8 @@ test: sophia
 	./sophia tests/circuit.sophia -o tests/results/circuit.ast -o tests/results/circuit.swift -o tests/results/circuit.cs -o tests/results/circuit.js
 	@diff -rq tests/accepted tests/results
 	@echo "\033[0;32m✓ outputs match\033[0m"
+
+accept:
+	@mkdir -p tests/accepted
+	@cp -a tests/results/* tests/accepted/
+	@echo "\033[0;32m✓ accepted\033[0m"

@@ -1,1 +1,4 @@
 ClassDecl: Matrix
+ClassDecl: Circuit
+  VarDecl: x
+    NumExpr: 42
