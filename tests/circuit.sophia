@@ -1,2 +1,4 @@
+class Matrix
+
 class Circuit =
     x = 42

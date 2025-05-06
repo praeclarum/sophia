@@ -29,11 +29,11 @@ void vm_free(struct VM *vm) {
 
 
 int vm_eval_ast(struct VM *vm, struct AST *ast) {
-    if (!vm || !ast) {
-        fprintf(stderr, "Error: Invalid VM or AST\n");
+    if (!vm) {
+        fprintf(stderr, "Error: Invalid VM\n");
         return 1;
     }
-    vm->ast = ast;
+    ast_append(vm->ast, ast);
     return 0;
 }
 

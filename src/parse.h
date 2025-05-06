@@ -39,45 +39,21 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     ASSIGN_MOD = 258,
-     ASSIGN_DIV = 259,
-     ASSIGN_MUL = 260,
-     ASSIGN_SUB = 261,
-     ASSIGN_ADD = 262,
-     OR = 263,
-     AND = 264,
-     NE = 265,
-     EQ = 266,
-     GE = 267,
-     LE = 268,
-     UMINUS = 269,
-     NUMBER = 270,
-     IDENTIFIER = 271,
-     EOL = 272,
-     CLASS = 273,
-     INDENT = 274,
-     DEDENT = 275
+     NUMBER = 258,
+     IDENTIFIER = 259,
+     EOL = 260,
+     CLASS = 261,
+     INDENT = 262,
+     DEDENT = 263
    };
 #endif
 /* Tokens.  */
-#define ASSIGN_MOD 258
-#define ASSIGN_DIV 259
-#define ASSIGN_MUL 260
-#define ASSIGN_SUB 261
-#define ASSIGN_ADD 262
-#define OR 263
-#define AND 264
-#define NE 265
-#define EQ 266
-#define GE 267
-#define LE 268
-#define UMINUS 269
-#define NUMBER 270
-#define IDENTIFIER 271
-#define EOL 272
-#define CLASS 273
-#define INDENT 274
-#define DEDENT 275
+#define NUMBER 258
+#define IDENTIFIER 259
+#define EOL 260
+#define CLASS 261
+#define INDENT 262
+#define DEDENT 263
 
 
 
@@ -88,9 +64,10 @@ typedef union YYSTYPE
 {
     char *str;
     int num;
+    struct AST *ast;
 }
 /* Line 1529 of yacc.c.  */
-#line 94 "src/parse.h"
+#line 71 "src/parse.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -51,3 +51,40 @@ struct AST *ast_new_class_decl(const char *name, struct AST *base_class, struct 
     ast->data.class_decl.members = members;
     return ast;
 }
+
+struct AST *ast_new_var_decl(const char *name, struct AST *value, int first_line) {
+    struct AST *ast = ast_new(AST_VAR_DECL);
+    (void)first_line; // Unused parameter
+    if (!ast) {
+        return NULL;
+    }
+    ast->data.var_decl.name = strdup(name);
+    if (!ast->data.var_decl.name) {
+        fprintf(stderr, "Error: Could not allocate memory for variable name\n");
+        ast_free(ast);
+        return NULL;
+    }
+    ast->data.var_decl.value = value;
+    return ast;
+}
+
+struct AST *ast_new_num_expr(int value, int first_line) {
+    struct AST *ast = ast_new(AST_NUM_EXPR);
+    (void)first_line; // Unused parameter
+    if (!ast) {
+        return NULL;
+    }
+    ast->data.num_expr.value = value;
+    return ast;
+}
+
+void ast_append(struct AST *parent, struct AST *child) {
+    if (!parent || !child) {
+        return;
+    }
+    struct AST *last = parent;
+    while (last->next) {
+        last = last->next;
+    }
+    last->next = child;
+}
