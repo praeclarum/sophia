@@ -1,7 +1,7 @@
 ClassDecl: Resistor
-  UnresolvedTypeRef: Element
+    UnresolvedTypeRef: Element
 ClassDecl: Element
-ClassDecl: Matrix
 ClassDecl: Circuit
-  VarDecl: x
-    NumExpr: 42
+    VarDecl: x
+        NumExpr: 42
+ClassDecl: Matrix

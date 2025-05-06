@@ -49,7 +49,7 @@ void ast_print(struct AST *ast, FILE *outfile, int indent_level) {
         return;
     }
     for (int i = 0; i < indent_level; i++) {
-        fprintf(outfile, "  ");
+        fprintf(outfile, "    ");
     }
     switch (ast->type) {
     case AST_CLASS_DECL:
