@@ -179,6 +179,10 @@ statement
     {
         $$ = $2;
     }
+    | IF expression EOL INDENT statements DEDENT ELSE EOL INDENT statements DEDENT
+    {
+        $$ = $2;
+    }
     | RETURN expression EOL
     {
         $$ = $2;
