@@ -45,11 +45,14 @@ void yyerror(YYLTYPE *llocp, struct VM *vm, struct LexState *lexstate, char cons
 %token CLASS
 %token INDENT DEDENT
 %token VAR
+%token FOR IF ELSE RETURN
+%token CLOSED_RANGE
 
 %type<ast> vm_statement
 %type<ast> class_declaration class_statements class_statement class_base
 %type<ast> variable_declaration
-%type<ast> function_declaration
+%type<ast> function_declaration function_parameters function_parameter
+%type<ast> statement statements
 %type<ast> expression
 %type<ast> type_ref
 
@@ -141,6 +144,55 @@ function_declaration
     {
         $$ = ast_new_func_decl($1, NULL, $5, $7, @1.first_line);
     }
+    | IDENTIFIER '(' ')' ':' type_ref '=' EOL INDENT statements DEDENT
+    {
+        $$ = ast_new_func_decl($1, NULL, $5, $9, @1.first_line);
+    }
+    | IDENTIFIER '(' function_parameters ')' ':' type_ref '=' expression
+    {
+        $$ = ast_new_func_decl($1, NULL, $6, $8, @1.first_line);
+    }
+    | IDENTIFIER '(' function_parameters ')' ':' type_ref '=' EOL INDENT statements DEDENT
+    {
+        $$ = ast_new_func_decl($1, NULL, $6, $10, @1.first_line);
+    }
+    ;
+
+function_parameters
+    : function_parameter
+    | function_parameters ',' function_parameter
+    {
+        ast_append($1, $3);
+    }
+    ;
+
+function_parameter
+    : variable_declaration
+    ;
+
+statement
+    : FOR IDENTIFIER '=' expression CLOSED_RANGE expression EOL INDENT statements DEDENT
+    {
+        $$ = $4;
+    }
+    | IF expression EOL INDENT statements DEDENT
+    {
+        $$ = $2;
+    }
+    | RETURN expression EOL
+    {
+        $$ = $2;
+    }
+    | variable_declaration EOL
+    | expression EOL
+    ;
+
+statements
+    : statement
+    | statements statement
+    {
+        ast_append($1, $2);
+    }
     ;
 
 expression
@@ -152,6 +204,9 @@ expression
     {
         $$ = ast_new_var_ref($1, @1.first_line);
     }
+    /* | expression IF expression ELSE expression
+    {
+    } */
     ;
 
 type_ref

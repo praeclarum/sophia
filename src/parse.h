@@ -45,7 +45,12 @@
      CLASS = 261,
      INDENT = 262,
      DEDENT = 263,
-     VAR = 264
+     VAR = 264,
+     FOR = 265,
+     IF = 266,
+     ELSE = 267,
+     RETURN = 268,
+     CLOSED_RANGE = 269
    };
 #endif
 /* Tokens.  */
@@ -56,6 +61,11 @@
 #define INDENT 262
 #define DEDENT 263
 #define VAR 264
+#define FOR 265
+#define IF 266
+#define ELSE 267
+#define RETURN 268
+#define CLOSED_RANGE 269
 
 
 
@@ -69,7 +79,7 @@ typedef union YYSTYPE
     struct AST *ast;
 }
 /* Line 1529 of yacc.c.  */
-#line 73 "src/parse.h"
+#line 83 "src/parse.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
